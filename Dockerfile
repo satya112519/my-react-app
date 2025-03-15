@@ -1,27 +1,24 @@
-# Step 1: Build the React app using Node.js
-FROM node:16 AS build
+# Use Node.js LTS version as the base image
+FROM node:18-alpine
 
+# Set working directory
 WORKDIR /app
 
-# Install dependencies
-COPY package*.json ./
+# Copy package.json and install dependencies
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copy all source files and build the app
+# Copy the entire application
 COPY . .
+
+# Build the React app
 RUN npm run build
 
-# Step 2: Use nginx to serve the React app
-FROM nginx:alpine
+# Install serve for static hosting
+RUN npm install -g serve
 
-# Copy the build files into the nginx directory
-COPY --from=build /app/build /usr/share/nginx/html
+# Start the application
+CMD ["serve", "-s", "build", "-l", "8080"]
 
-# Copy the custom nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# Expose port 8080 for Cloud Run
+# Expose the required port
 EXPOSE 8080
-
-# Run nginx
-CMD ["nginx", "-g", "daemon off;"]
