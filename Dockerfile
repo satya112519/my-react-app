@@ -17,8 +17,8 @@ FROM nginx:alpine
 # Copy the built files to nginx directory
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Expose port 80
-EXPOSE 80
+# Expose port 8080
+EXPOSE 8080
 
 # Run nginx
 CMD ["nginx", "-g", "daemon off;"]
